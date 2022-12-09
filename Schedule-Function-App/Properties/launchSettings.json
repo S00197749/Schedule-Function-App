@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Schedule_Function_App": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7221",
+      "launchBrowser": false
+    }
+  }
+}
