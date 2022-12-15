@@ -8,29 +8,32 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Data.SqlClient;
-using System.Threading.Tasks;
 
 namespace Schedule_Function_App
 {
-    public static class Function1
+    public static class Update
     {
-        [FunctionName("Function1")]
+        [FunctionName("Update")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
             ILogger log)
         {
-            var str = Environment.GetEnvironmentVariable("sqldb_connection");
-            using (SqlConnection conn = new SqlConnection(str))
-            {
-                conn.Open();
-                var query = "UPDATE SalesLT.SalesOrderHeader " +
-                        "SET [Status] = 4  WHERE ShipDate < GetDate();";
+            string status = req.Query["status"];
 
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+            if(status != null) { 
+                var str = Environment.GetEnvironmentVariable("sqldb_connection");
+                using (SqlConnection conn = new SqlConnection(str))
                 {
-                    // Execute the command and log the # rows affected.
-                    var rows = await cmd.ExecuteNonQueryAsync();
-                    log.LogInformation($"{rows} rows were updated");
+                    conn.Open();
+                    var query = "UPDATE SalesLT.SalesOrderHeader " +
+                            $"SET [Status] = {status}  WHERE ShipDate < GetDate();";
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        // Execute the command and log the # rows affected.
+                        var rows = await cmd.ExecuteNonQueryAsync();
+                        log.LogInformation($"{rows} rows were updated");
+                    }
                 }
             }
 
