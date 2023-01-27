@@ -35,21 +35,17 @@ namespace Schedule_Function_App
                         log.LogInformation($"{rows} rows were updated");
                     }
                 }
+
+                string responseMessage = $"This HTTP triggered function executed successfully.";
+
+                return new OkObjectResult(responseMessage);
             }
+            else
+            {
+                string responseMessage = "This HTTP triggered function executed successfully. Pass a Username and Password in the query string or in the request body for a response.";
 
-            log.LogInformation("C# HTTP trigger function processed a request.");
-
-            string name = req.Query["name"];
-
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
-            name = name ?? data?.name;
-
-            string responseMessage = string.IsNullOrEmpty(name)
-                ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
-                : $"Hello, {name}. This HTTP triggered function executed successfully.";
-
-            return new OkObjectResult(responseMessage);
+                return new OkObjectResult(responseMessage);
+            }
         }
     }
 }
