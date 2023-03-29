@@ -13,14 +13,14 @@ using System.Data.SqlClient;
 
 namespace Schedule_Function_App
 {
-    public static class GetGroupsMembers
+    public static class GetGroupActivities
     {
-        [FunctionName("GetGroupsMembers")]
+        [FunctionName("GetGroupActivities")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
             ILogger log)
         {
-            List<GroupMembers> memberList = new List<GroupMembers>();
+            List<GroupActivity> activityList = new List<GroupActivity>();
             int group_id = int.Parse(req.Query["group_id"]);
 
             if (group_id != null)
@@ -29,8 +29,8 @@ namespace Schedule_Function_App
                 using (SqlConnection conn = new SqlConnection(str))
                 {
                     conn.Open();
-                    var query = "Select GroupMembers.Member_Id, GroupMembers.Group_Id, GroupMembers.User_Id, GroupMembers.Role_Id, Users.User_Name " +
-                                    "From GroupMembers INNER JOIN Users ON GroupMembers.User_Id = Users.User_Id " +
+                    var query = "Select * " +
+                                    "From GroupActivities " +
                                          $"Where Group_Id = @Group_id";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -45,21 +45,23 @@ namespace Schedule_Function_App
                         var reader = await cmd.ExecuteReaderAsync();
                         while (reader.Read())
                         {
-                            GroupMembers group = new GroupMembers()
+                            GroupActivity activity = new GroupActivity()
                             {
-                                Member_Id = (int)reader["Member_Id"],
+                                Activity_Id = (int)reader["Activity_Id"],
                                 Group_Id = (int)reader["Group_Id"],
-                                User_Id = (int)reader["User_Id"],
-                                Role_Id = (int)reader["Role_Id"],
-                                User_Name = reader["User_Name"].ToString()
+                                Activity_Name = reader["Activity_Name"].ToString(),
+                                Activity_Description = reader["Activity_Desc"].ToString(),
+                                Limit = (bool)reader["Limit"],
+                                Minimum_Members = (reader["Min_Members"] == null)? (int)reader["Min_Members"] : null,
+                                Maximum_Members = (reader["Max_Members"] == null) ? (int)reader["Max_Members"] : null
                             };
-                            memberList.Add(group);
+                            activityList.Add(activity);
                         }
                     }
                 }
-                if (memberList.Count > 0)
+                if (activityList.Count > 0)
                 {
-                    return new OkObjectResult(memberList);
+                    return new OkObjectResult(activityList);
                 }
                 return new OkObjectResult("No Groups");
             }
