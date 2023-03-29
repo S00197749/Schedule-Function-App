@@ -29,11 +29,15 @@ namespace Schedule_Function_App
                 using (SqlConnection conn = new SqlConnection(str))
                 {
                     conn.Open();
-                    var query = "Select Groups.Group_Id, Groups.Group_Name, Groups.Group_Desc, Groups.Group_Image From Groups INNER JOIN GroupMembers ON Groups.Group_Id = GroupMembers.Group_Id " +
-                            $"AND User_Id = {user_id}";
+                    var query = "Select Groups.Group_Id, Groups.Group_Name, Groups.Group_Desc, Groups.Group_Image "+
+                                    "From Groups INNER JOIN GroupMembers ON Groups.Group_Id = GroupMembers.Group_Id " +
+                                         $"AND User_Id = @User_id";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
+                        // Add parameter.
+                        cmd.Parameters.AddWithValue("@User_id", user_id);
+
                         // Execute the command and log the # rows affected.
                         var rows = await cmd.ExecuteNonQueryAsync();
                         log.LogInformation($"{rows} rows were updated");
