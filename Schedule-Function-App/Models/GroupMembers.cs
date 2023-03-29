@@ -12,5 +12,6 @@ namespace Schedule_Function_App.Models
         public int Group_Id { get; set; }
         public int User_Id { get; set; }
         public int Role_Id { get; set; }
+        public string UserName { get; set; }
     }
 }
