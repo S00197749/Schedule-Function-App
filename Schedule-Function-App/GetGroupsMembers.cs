@@ -51,7 +51,7 @@ namespace Schedule_Function_App
                                 Group_Id = (int)reader["Group_Id"],
                                 User_Id = (int)reader["User_Id"],
                                 Role_Id = (int)reader["Role_Id"],
-                                UserName = reader["User_Name"].ToString()
+                                User_Name = reader["User_Name"].ToString()
                             };
                             memberList.Add(group);
                         }
