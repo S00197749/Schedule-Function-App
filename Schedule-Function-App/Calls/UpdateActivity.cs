@@ -11,31 +11,37 @@ using System.Data.SqlClient;
 
 namespace Schedule_Function_App
 {
-    public static class UpdateGroup
+    public static class UpdateActivity
     {
-        [FunctionName("UpdateGroup")]
+        [FunctionName("UpdateActivity")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
             ILogger log)
         {
+            int activity_id = int.Parse(req.Query["activity_id"]);
             int group_id = int.Parse(req.Query["group_id"]);
-            string group_name = req.Query["group_name"];
-            string group_desc = req.Query["group_desc"];
+            string activity_name = req.Query["activity_name"];
+            string activity_desc = req.Query["activity_desc"];
+            bool limit = bool.Parse(req.Query["limit"]);
+            int? min_members = int.Parse(req.Query["min_members"]);
 
-            if (group_id != null && group_name != null && group_desc != null) { 
+            if (activity_id != null && activity_name != null) { 
                 var str = Environment.GetEnvironmentVariable("sqldb_connection");
                 using (SqlConnection conn = new SqlConnection(str))
                 {
                     conn.Open();
-                    var query = "UPDATE Groups " +
-                            "SET Group_Name = @Group_Name, Group_Desc = @Group_Desc " +
-                                "WHERE Group_Id = @Group_Id;";
+                    var query = "UPDATE GroupActivities " +
+                            "SET Activity_Name = @Activity_Name, Activity_Desc = @Activity_Desc , Limit = @Limit , Min_Members = @Min_Members " +
+                                "WHERE Activity_Id = @Activity_Id AND Group_Id = @Group_Id;";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
+                        cmd.Parameters.AddWithValue("@Activity_Id", activity_id);
                         cmd.Parameters.AddWithValue("@Group_Id", group_id);
-                        cmd.Parameters.AddWithValue("@Group_Name", group_name);
-                        cmd.Parameters.AddWithValue("@Group_Desc", group_desc);
+                        cmd.Parameters.AddWithValue("@Activity_Name", activity_name);
+                        cmd.Parameters.AddWithValue("@Activity_Desc", activity_desc);
+                        cmd.Parameters.AddWithValue("@Limit", limit);
+                        cmd.Parameters.AddWithValue("@Min_Members", min_members);
 
                         // Execute the command and log the # rows affected.
                         var rows = await cmd.ExecuteNonQueryAsync();
