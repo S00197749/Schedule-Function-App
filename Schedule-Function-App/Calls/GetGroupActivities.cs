@@ -52,8 +52,8 @@ namespace Schedule_Function_App
                                 Activity_Name = reader["Activity_Name"].ToString(),
                                 Activity_Description = reader["Activity_Desc"].ToString(),
                                 Limit = (bool)reader["Limit"],
-                                Minimum_Members = (reader["Min_Members"] != null)? (int)reader["Min_Members"] : null,
-                                Maximum_Members = (reader["Max_Members"] != null) ? (int)reader["Max_Members"] : null
+                                Minimum_Members = (reader["Min_Members"].GetType().IsValueType)? (int)reader["Min_Members"] : null,
+                                Maximum_Members = (reader["Max_Members"].GetType().IsValueType) ? (int)reader["Max_Members"] : null
                             };
                             activityList.Add(activity);
                         }
