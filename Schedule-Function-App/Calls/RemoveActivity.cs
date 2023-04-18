@@ -16,7 +16,7 @@ namespace Schedule_Function_App
     {
         [FunctionName("RemoveActivity")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "delete", Route = null)] HttpRequest req,
             ILogger log)
         {
             var body = await new StreamReader(req.Body).ReadToEndAsync();
