@@ -32,7 +32,7 @@ namespace Schedule_Function_App
                     {
                         conn.Open();
                         var query = "DELETE FROM Groups " +
-                                "WHERE Group_Id = @Group_Id);";
+                                "WHERE Group_Id = @Group_Id;";
 
                         using (SqlCommand cmd = new SqlCommand(query, conn))
                         {
