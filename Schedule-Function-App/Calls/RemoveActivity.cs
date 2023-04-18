@@ -31,7 +31,7 @@ namespace Schedule_Function_App
                     using (SqlConnection conn = new SqlConnection(str))
                     {
                         conn.Open();
-                        var query = "DELETE FROM GroupMembers " +
+                        var query = "DELETE FROM GroupActivities " +
                                 "WHERE Activity_Id = @Activity_Id);";
 
                         using (SqlCommand cmd = new SqlCommand(query, conn))
