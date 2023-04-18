@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Data.SqlClient;
+using Schedule_Function_App.Models;
 
 namespace Schedule_Function_App
 {
@@ -15,14 +16,14 @@ namespace Schedule_Function_App
     {
         [FunctionName("CreateGroup")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             ILogger log)
         {
-            int user_id = int.Parse(req.Query["user_id"]);
-            string group_name = req.Query["group_name"];
-            string group_desc = req.Query["group_desc"];
+            var body = await new StreamReader(req.Body).ReadToEndAsync();
 
-            if (user_id != null && group_name != null) { 
+            NewGroup group = JsonConvert.DeserializeObject<NewGroup>(body);
+
+            if (group.Group_Name != null) { 
                 var str = Environment.GetEnvironmentVariable("sqldb_connection");
                 using (SqlConnection conn = new SqlConnection(str))
                 {
@@ -32,9 +33,9 @@ namespace Schedule_Function_App
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        cmd.Parameters.AddWithValue("@User_Id", user_id);
-                        cmd.Parameters.AddWithValue("@Group_Name", group_name);
-                        cmd.Parameters.AddWithValue("@Group_Desc", group_desc);
+                        cmd.Parameters.AddWithValue("@User_Id", group.User_Id);
+                        cmd.Parameters.AddWithValue("@Group_Name", group.Group_Name);
+                        cmd.Parameters.AddWithValue("@Group_Desc", group.Group_Description);
 
                         // Execute the command and log the # rows affected.
                         var rows = await cmd.ExecuteNonQueryAsync();

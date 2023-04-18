@@ -22,42 +22,53 @@ namespace Schedule_Function_App
         {
             var body = await new StreamReader(req.Body).ReadToEndAsync();
 
-            GroupActivity groupActivity = JsonConvert.DeserializeObject<GroupActivity>(body);
+            UpdatedActivity groupActivity = JsonConvert.DeserializeObject<UpdatedActivity>(body);
 
-            if (groupActivity.Activity_Id != null && groupActivity.Activity_Name != null) { 
-                var str = Environment.GetEnvironmentVariable("sqldb_connection");
-                using (SqlConnection conn = new SqlConnection(str))
+            if (await Verify.IsAdmin(groupActivity.User_Id, groupActivity.Group_Id))
+            {
+                if (groupActivity.Activity_Id != null && groupActivity.Activity_Name != null)
                 {
-                    conn.Open();
-                    var query = "UPDATE GroupActivities " +
-                            "SET Activity_Name = @Activity_Name, Activity_Desc = @Activity_Desc , Limit = @Limit , Min_Members = @Min_Members " +
-                                "WHERE Activity_Id = @Activity_Id AND Group_Id = @Group_Id;";
-
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    var str = Environment.GetEnvironmentVariable("sqldb_connection");
+                    using (SqlConnection conn = new SqlConnection(str))
                     {
-                        cmd.Parameters.AddWithValue("@Activity_Id", groupActivity.Activity_Id);
-                        cmd.Parameters.AddWithValue("@Group_Id", groupActivity.Group_Id);
-                        cmd.Parameters.AddWithValue("@Activity_Name", groupActivity.Activity_Name);
-                        cmd.Parameters.AddWithValue("@Activity_Desc", groupActivity.Activity_Description);
-                        cmd.Parameters.AddWithValue("@Limit", groupActivity.Limit);
-                        cmd.Parameters.AddWithValue("@Min_Members", groupActivity.Minimum_Members);
+                        conn.Open();
+                        var query = "UPDATE GroupActivities " +
+                                "SET Activity_Name = @Activity_Name, Activity_Desc = @Activity_Desc , Limit = @Limit , Min_Members = @Min_Members " +
+                                    "WHERE Activity_Id = @Activity_Id AND Group_Id = @Group_Id;";
 
-                        // Execute the command and log the # rows affected.
-                        var rows = await cmd.ExecuteNonQueryAsync();
-                        log.LogInformation($"{rows} rows were updated");
+                        using (SqlCommand cmd = new SqlCommand(query, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@Activity_Id", groupActivity.Activity_Id);
+                            cmd.Parameters.AddWithValue("@Group_Id", groupActivity.Group_Id);
+                            cmd.Parameters.AddWithValue("@Activity_Name", groupActivity.Activity_Name);
+                            cmd.Parameters.AddWithValue("@Activity_Desc", groupActivity.Activity_Description);
+                            cmd.Parameters.AddWithValue("@Limit", groupActivity.Limit);
+                            cmd.Parameters.AddWithValue("@Min_Members", groupActivity.Minimum_Members);
+
+                            // Execute the command and log the # rows affected.
+                            var rows = await cmd.ExecuteNonQueryAsync();
+                            log.LogInformation($"{rows} rows were updated");
+                        }
                     }
+
+                    string responseMessage = $"This HTTP triggered function executed successfully.";
+
+                    return new OkObjectResult(responseMessage);
                 }
+                else
+                {
+                    string responseMessage = "This HTTP triggered function executed successfully. Pass Group info in the query string or in the request body for a response.";
 
-                string responseMessage = $"This HTTP triggered function executed successfully.";
-
-                return new OkObjectResult(responseMessage);
+                    return new OkObjectResult(responseMessage);
+                }
             }
             else
             {
-                string responseMessage = "This HTTP triggered function executed successfully. Pass Group info in the query string or in the request body for a response.";
+                string responseMessage = "You must be an Admin of this group to create this request.";
 
-                return new OkObjectResult(responseMessage);
+                return new BadRequestObjectResult(responseMessage);
             }
+
         }
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Data.SqlClient;
+using Schedule_Function_App.Models;
 
 namespace Schedule_Function_App
 {
@@ -15,44 +16,55 @@ namespace Schedule_Function_App
     {
         [FunctionName("UpdateGroup")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function,"post", Route = null)] HttpRequest req,
             ILogger log)
         {
-            int group_id = int.Parse(req.Query["group_id"]);
-            string group_name = req.Query["group_name"];
-            string group_desc = req.Query["group_desc"];
+            var body = await new StreamReader(req.Body).ReadToEndAsync();
 
-            if (group_id != null && group_name != null) { 
-                var str = Environment.GetEnvironmentVariable("sqldb_connection");
-                using (SqlConnection conn = new SqlConnection(str))
+            UpdatedGroup group = JsonConvert.DeserializeObject<UpdatedGroup>(body);
+
+            if (await Verify.IsAdmin(group.User_Id, group.Group_Id))
+            {
+                if (group.Group_Id != null && group.Group_Name != null)
                 {
-                    conn.Open();
-                    var query = "UPDATE Groups " +
-                            "SET Group_Name = @Group_Name, Group_Desc = @Group_Desc " +
-                                "WHERE Group_Id = @Group_Id;";
-
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    var str = Environment.GetEnvironmentVariable("sqldb_connection");
+                    using (SqlConnection conn = new SqlConnection(str))
                     {
-                        cmd.Parameters.AddWithValue("@Group_Id", group_id);
-                        cmd.Parameters.AddWithValue("@Group_Name", group_name);
-                        cmd.Parameters.AddWithValue("@Group_Desc", group_desc);
+                        conn.Open();
+                        var query = "UPDATE Groups " +
+                                "SET Group_Name = @Group_Name, Group_Desc = @Group_Desc " +
+                                    "WHERE Group_Id = @Group_Id;";
 
-                        // Execute the command and log the # rows affected.
-                        var rows = await cmd.ExecuteNonQueryAsync();
-                        log.LogInformation($"{rows} rows were updated");
+                        using (SqlCommand cmd = new SqlCommand(query, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@Group_Id", group.Group_Id);
+                            cmd.Parameters.AddWithValue("@Group_Name", group.Group_Name);
+                            cmd.Parameters.AddWithValue("@Group_Desc", group.Group_Description);
+
+                            // Execute the command and log the # rows affected.
+                            var rows = await cmd.ExecuteNonQueryAsync();
+                            log.LogInformation($"{rows} rows were updated");
+                        }
                     }
+
+                    string responseMessage = $"This HTTP triggered function executed successfully.";
+
+                    return new OkObjectResult(responseMessage);
                 }
+                else
+                {
+                    string responseMessage = "This HTTP triggered function executed successfully. Pass Group info in the query string or in the request body for a response.";
 
-                string responseMessage = $"This HTTP triggered function executed successfully.";
-
-                return new OkObjectResult(responseMessage);
+                    return new OkObjectResult(responseMessage);
+                }
             }
             else
             {
-                string responseMessage = "This HTTP triggered function executed successfully. Pass Group info in the query string or in the request body for a response.";
+                string responseMessage = "You must be an Admin of this group to create this request.";
 
-                return new OkObjectResult(responseMessage);
+                return new BadRequestObjectResult(responseMessage);
             }
+
         }
     }
 }

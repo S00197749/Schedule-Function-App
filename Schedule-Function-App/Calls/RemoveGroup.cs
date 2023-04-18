@@ -12,31 +12,31 @@ using Schedule_Function_App.Models;
 
 namespace Schedule_Function_App
 {
-    public static class RemoveActivity
+    public static class RemoveGroup
     {
-        [FunctionName("RemoveActivity")]
+        [FunctionName("RemoveGroup")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             ILogger log)
         {
             var body = await new StreamReader(req.Body).ReadToEndAsync();
 
-            RemovedActivity activity = JsonConvert.DeserializeObject<RemovedActivity>(body);
+            RemovedGroup group = JsonConvert.DeserializeObject<RemovedGroup>(body);
 
-            if (await Verify.IsAdmin(activity.User_Id, activity.Group_Id))
+            if (await Verify.IsAdmin(group.User_Id, group.Group_Id))
             {
-                if (activity.User_Id != null && activity.Activity_Id != null)
+                if (group.User_Id != null && group.Group_Id != null)
                 {
                     var str = Environment.GetEnvironmentVariable("sqldb_connection");
                     using (SqlConnection conn = new SqlConnection(str))
                     {
                         conn.Open();
                         var query = "DELETE FROM GroupMembers " +
-                                "WHERE Activity_Id = @Activity_Id);";
+                                "WHERE Member_Id = @Member_Id);";
 
                         using (SqlCommand cmd = new SqlCommand(query, conn))
                         {
-                            cmd.Parameters.AddWithValue("@Activity_Id", activity.Activity_Id);
+                            cmd.Parameters.AddWithValue("@Member_Id", group.Group_Id);
 
                             // Execute the command and log the # rows affected.
                             var rows = await cmd.ExecuteNonQueryAsync();

@@ -17,7 +17,7 @@ namespace Schedule_Function_App
     {
         [FunctionName("GetGroups")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
             ILogger log)
         {
             List<Group> groupList = new List<Group>();
@@ -31,12 +31,12 @@ namespace Schedule_Function_App
                     conn.Open();
                     var query = "Select Groups.Group_Id, Groups.Group_Name, Groups.Group_Desc, Groups.Group_Image "+
                                     "From Groups INNER JOIN GroupMembers ON Groups.Group_Id = GroupMembers.Group_Id " +
-                                         $"AND User_Id = @User_id";
+                                         $"AND User_Id = @User_Id";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         // Add parameter.
-                        cmd.Parameters.AddWithValue("@User_id", user_id);
+                        cmd.Parameters.AddWithValue("@User_Id", user_id);
 
                         // Execute the command and log the # rows affected.
                         var rows = await cmd.ExecuteNonQueryAsync();
