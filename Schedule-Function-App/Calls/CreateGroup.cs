@@ -29,7 +29,7 @@ namespace Schedule_Function_App
                 {
                     conn.Open();
                     var query = "INSERT INTO Groups (Group_Name, Group_Desc) " +
-                            "VALUES (@Group_Name, @Group_Desc); " +
+                            "VALUES (@Group_Name, @Group_Desc) " +
                                 "INSERT INTO GroupMembers (Group_Id, User_Id, Role_Id) " +
                                     "VALUES (SCOPE_IDENTITY(), @User_Id, @Role_Id);";
 
