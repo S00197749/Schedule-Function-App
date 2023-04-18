@@ -8,39 +8,39 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Data.SqlClient;
-using Schedule_Function_App.Models;
-using System.Reflection.Metadata;
 
 namespace Schedule_Function_App
 {
-    public static class UpdateActivity
+    public static class CreateActivity
     {
-        [FunctionName("UpdateActivity")]
+        [FunctionName("CreateActivity")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
             ILogger log)
         {
-            var body = await new StreamReader(req.Body).ReadToEndAsync();
+            int user_id = int.Parse(req.Query["user_id"]);
+            int group_id = int.Parse(req.Query["group_id"]);
+            string activity_name = req.Query["activity_name"];
+            string activity_desc = req.Query["activity_desc"];
+            bool limit = bool.Parse(req.Query["limit"]);
+            int? min_members = int.Parse(req.Query["min_members"]);
 
-            GroupActivity groupActivity = JsonConvert.DeserializeObject<GroupActivity>(body);
-
-            if (groupActivity.Activity_Id != null && groupActivity.Activity_Name != null) { 
+            if (user_id != null && activity_name != null) { 
                 var str = Environment.GetEnvironmentVariable("sqldb_connection");
                 using (SqlConnection conn = new SqlConnection(str))
                 {
                     conn.Open();
-                    var query = "UPDATE GroupActivities " +
-                            "SET Activity_Name = @Activity_Name, Activity_Desc = @Activity_Desc , Limit = @Limit , Min_Members = @Min_Members " +
-                                "WHERE Activity_Id = @Activity_Id AND Group_Id = @Group_Id;";
+                    var query = "INSERT INTO GroupActivities (Group_Id, Activity_Name, Activity_Desc, Limit, Min_Members) " +
+                            "VALUES (@Group_Id, @Activity_Name, @Activity_Desc , @Limit , @Min_Members);";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        cmd.Parameters.AddWithValue("@Activity_Id", groupActivity.Activity_Id);
-                        cmd.Parameters.AddWithValue("@Group_Id", groupActivity.Group_Id);
-                        cmd.Parameters.AddWithValue("@Activity_Name", groupActivity.Activity_Name);
-                        cmd.Parameters.AddWithValue("@Activity_Desc", groupActivity.Activity_Description);
-                        cmd.Parameters.AddWithValue("@Limit", groupActivity.Limit);
-                        cmd.Parameters.AddWithValue("@Min_Members", groupActivity.Minimum_Members);
+                        cmd.Parameters.AddWithValue("@User_Id", user_id);
+                        cmd.Parameters.AddWithValue("@Group_Id", group_id);
+                        cmd.Parameters.AddWithValue("@Activity_Name", activity_name);
+                        cmd.Parameters.AddWithValue("@Activity_Desc", activity_desc);
+                        cmd.Parameters.AddWithValue("@Limit", limit);
+                        cmd.Parameters.AddWithValue("@Min_Members", min_members);
 
                         // Execute the command and log the # rows affected.
                         var rows = await cmd.ExecuteNonQueryAsync();

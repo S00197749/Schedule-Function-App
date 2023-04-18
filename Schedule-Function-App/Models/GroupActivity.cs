@@ -14,6 +14,5 @@ namespace Schedule_Function_App.Models
         public string? Activity_Description { get; set; }
         public bool Limit { get; set; }
         public int? Minimum_Members { get; set;}
-        public int? Maximum_Members { get; set; }
     }
 }
