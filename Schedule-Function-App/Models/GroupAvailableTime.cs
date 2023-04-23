@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace Schedule_Function_App.Models
 {
-    public class RecurringTime
+    public class GroupAvailableTime
     {
-        public int Recurring_Id { get; set; }
-        public int Group_Id { get; set; }
-        public int User_Id { get; set; }
-        public int DayOfWeek { get; set; }
+        public string Summary { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
     }

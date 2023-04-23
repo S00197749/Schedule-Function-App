@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Schedule_Function_App.Models
 {
-    public class GroupMembers
+    public class GroupMember
     {
         public int Member_Id { get; set; }
         public int Group_Id { get; set; }

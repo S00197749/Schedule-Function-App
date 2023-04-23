@@ -11,6 +11,7 @@ namespace Schedule_Function_App.Models
         public int Invite_Id { get; set; }
         public int Group_Id { get; set;}
         public int User_Id { get; set;}
+        public string Invite_Code { get; set; }
         public bool Accepted { get; set; }
     }
 }

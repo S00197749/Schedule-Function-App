@@ -12,6 +12,9 @@ namespace Schedule_Function_App.Models
         public string Group_Name { get; set; }
         public string? Group_Description { get; set; }
         public string? Group_Image { get; set;}
+        public GroupActivity[] Activities { get; set; }
+        public GroupMember[] Members { get; set; }
+
     }
     public class NewGroup
     {

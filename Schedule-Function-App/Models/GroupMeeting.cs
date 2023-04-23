@@ -6,22 +6,19 @@ using System.Threading.Tasks;
 
 namespace Schedule_Function_App.Models
 {
-    public class UserSchedule
+    public class GroupMeeting
     {
-        public int Timeslot_Id { get; set; }
+        public int Meeting_Id { get; set; }
         public int Group_Id { get; set; }
-        public int User_Id { get; set; }
-        public int? Recurring_Id { get; set; }
-        public int? Activity_Id { get; set; }
+        public int Activity_Id { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
     }
-    public class NewUserSchedule
+    public class NewGroupMeeting
     {
         public int Group_Id { get; set; }
         public int User_Id { get; set; }
-        public int? Recurring_Id { get; set; }
-        public int? Activity_Id { get; set; }
+        public int Activity_Id { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
     }
