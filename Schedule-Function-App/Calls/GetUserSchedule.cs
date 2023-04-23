@@ -13,9 +13,9 @@ using System.Data.SqlClient;
 
 namespace Schedule_Function_App
 {
-    public static class GetGroups
+    public static class GetUserSchedule
     {
-        [FunctionName("GetGroups")]
+        [FunctionName("GetUserSchedule")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
             ILogger log)
@@ -24,15 +24,15 @@ namespace Schedule_Function_App
 
             int User_Id = JsonConvert.DeserializeObject<int>(body);
 
-            List<Group> groupList = new List<Group>();
+            List<UserSchedule> userSchedules = new List<UserSchedule>();
 
             var str = Environment.GetEnvironmentVariable("sqldb_connection");
             using (SqlConnection conn = new SqlConnection(str))
             {
                 conn.Open();
-                var query = "Select Groups.Group_Id, Groups.Group_Name, Groups.Group_Desc, Groups.Group_Image " +
-                                "From Groups INNER JOIN GroupMembers ON Groups.Group_Id = GroupMembers.Group_Id " +
-                                     $"AND User_Id = @User_Id";
+                var query = "Select Timeslot_Id, User_Id, IsRecurring, Recurring_Id, StartTime, EndTime " +
+                                "From UserSchedule " +
+                                     $"Where User_Id = @User_Id";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
@@ -46,20 +46,22 @@ namespace Schedule_Function_App
                     var reader = await cmd.ExecuteReaderAsync();
                     while (reader.Read())
                     {
-                        Group group = new Group()
+                        UserSchedule userSchedule = new UserSchedule()
                         {
-                            Group_Id = (int)reader["Group_Id"],
-                            Group_Name = reader["Group_Name"].ToString(),
-                            Group_Description = reader["Group_Desc"].ToString(),
-                            Group_Image = reader["Group_Image"].ToString()
+                            Timeslot_Id = (int)reader["Timeslot_Id"],
+                            User_Id = (int)reader["User_Id"],
+                            IsRecurring = (bool)reader["IsRecurring"],
+                            Recurring_Id = (reader["Recurring_Id"].GetType().IsValueType) ? (int)reader["Recurring_Id"] : null,
+                            StartTime = (DateTime)reader["StartTime"],
+                            EndTime = (DateTime)reader["EndTime"],
                         };
-                        groupList.Add(group);
+                        userSchedules.Add(userSchedule);
                     }
                 }
             }
-            if (groupList.Count > 0)
+            if (userSchedules.Count > 0)
             {
-                return new OkObjectResult(groupList);
+                return new OkObjectResult(userSchedules);
             }
             return new NotFoundObjectResult("No Groups");
         }

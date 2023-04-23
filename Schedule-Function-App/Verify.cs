@@ -18,43 +18,70 @@ namespace Schedule_Function_App
     {
         public static async Task<bool> IsAdmin(int userId, int groupId)
         {
-            if (userId != null && groupId!= null)
+            int Role_Id = 0;
+            var str = Environment.GetEnvironmentVariable("sqldb_connection");
+            using (SqlConnection conn = new SqlConnection(str))
             {
-                int Role_Id = 0;
-                var str = Environment.GetEnvironmentVariable("sqldb_connection");
-                using (SqlConnection conn = new SqlConnection(str))
+                conn.Open();
+                var query = "Select Role_Id " +
+                                "From GroupMembers " +
+                                     $"Where User_Id = @User_Id AND Group_Id = @Group_Id";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    conn.Open();
-                    var query = "Select Role_Id " +
-                                    "From GroupMembers " +
-                                         $"Where User_Id = @User_Id AND Group_Id = @Group_Id";
+                    // Add parameter.
+                    cmd.Parameters.AddWithValue("@User_Id", userId);
+                    cmd.Parameters.AddWithValue("@Group_Id", groupId);
 
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    // Execute the command and log the # rows affected.
+                    var rows = await cmd.ExecuteNonQueryAsync();
+
+                    var reader = await cmd.ExecuteReaderAsync();
+                    while (reader.Read())
                     {
-                        // Add parameter.
-                        cmd.Parameters.AddWithValue("@User_Id", userId);
-                        cmd.Parameters.AddWithValue("@Group_Id", groupId);
-
-                        // Execute the command and log the # rows affected.
-                        var rows = await cmd.ExecuteNonQueryAsync();
-
-                        var reader = await cmd.ExecuteReaderAsync();
-                        while (reader.Read())
-                        {
-                            Role_Id = (int)reader["Role_Id"];                            
-                        }
+                        Role_Id = (int)reader["Role_Id"];
                     }
                 }
+            }
 
-                if (Role_Id == 1)
-                    return true;
-                else
-                    return false;
-            }
+            if (Role_Id == 1)
+                return true;
             else
-            {
                 return false;
+        }
+
+        public static async Task<bool> IsMember(int userId, int groupId)
+        {
+            int Member_Id = 0;
+            var str = Environment.GetEnvironmentVariable("sqldb_connection");
+            using (SqlConnection conn = new SqlConnection(str))
+            {
+                conn.Open();
+                var query = "Select Member_Id " +
+                                "From GroupMembers " +
+                                     $"Where User_Id = @User_Id AND Group_Id = @Group_Id";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    // Add parameter.
+                    cmd.Parameters.AddWithValue("@User_Id", userId);
+                    cmd.Parameters.AddWithValue("@Group_Id", groupId);
+
+                    // Execute the command and log the # rows affected.
+                    var rows = await cmd.ExecuteNonQueryAsync();
+
+                    var reader = await cmd.ExecuteReaderAsync();
+                    while (reader.Read())
+                    {
+                        Member_Id = (int)reader["Member_Id"];
+                    }
+                }
             }
+
+            if (Member_Id != 0)
+                return true;
+            else
+                return false;
         }
     }
 }

@@ -25,35 +25,26 @@ namespace Schedule_Function_App
 
             if (await Verify.IsAdmin(member.User_Id, member.Group_Id))
             {
-                if (member.User_Id != null && member.Member_Id != null)
+                var str = Environment.GetEnvironmentVariable("sqldb_connection");
+                using (SqlConnection conn = new SqlConnection(str))
                 {
-                    var str = Environment.GetEnvironmentVariable("sqldb_connection");
-                    using (SqlConnection conn = new SqlConnection(str))
+                    conn.Open();
+                    var query = "DELETE FROM GroupMembers " +
+                            "WHERE Member_Id = @Member_Id;";
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        conn.Open();
-                        var query = "DELETE FROM GroupMembers " +
-                                "WHERE Member_Id = @Member_Id;";
+                        cmd.Parameters.AddWithValue("@Member_Id", member.Member_Id);
 
-                        using (SqlCommand cmd = new SqlCommand(query, conn))
-                        {
-                            cmd.Parameters.AddWithValue("@Member_Id", member.Member_Id);
-
-                            // Execute the command and log the # rows affected.
-                            var rows = await cmd.ExecuteNonQueryAsync();
-                            log.LogInformation($"{rows} rows were updated");
-                        }
+                        // Execute the command and log the # rows affected.
+                        var rows = await cmd.ExecuteNonQueryAsync();
+                        log.LogInformation($"{rows} rows were updated");
                     }
-
-                    string responseMessage = $"This HTTP triggered function executed successfully.";
-
-                    return new OkObjectResult(responseMessage);
                 }
-                else
-                {
-                    string responseMessage = "This HTTP triggered function executed successfully. Pass Group info in the query string or in the request body for a response.";
 
-                    return new OkObjectResult(responseMessage);
-                }
+                string responseMessage = $"This HTTP triggered function executed successfully.";
+
+                return new OkObjectResult(responseMessage);
             }
             else
             {

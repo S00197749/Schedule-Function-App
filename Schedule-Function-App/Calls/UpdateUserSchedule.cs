@@ -9,38 +9,39 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Data.SqlClient;
 using Schedule_Function_App.Models;
-using Schedule_Function_App;
+using System.Reflection.Metadata;
 
 namespace Schedule_Function_App
 {
-    public static class CreateUserSchedule
+    public static class UpdateUserSchedule
     {
-        [FunctionName("CreateUserSchedule")]
+        [FunctionName("UpdateUserSchedule")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             ILogger log)
         {
             var body = await new StreamReader(req.Body).ReadToEndAsync();
 
-            NewUserSchedule availableTime = JsonConvert.DeserializeObject<NewUserSchedule>(body);
+            UpdatedUserSchedule availableTime = JsonConvert.DeserializeObject<UpdatedUserSchedule>(body);
 
             var str = Environment.GetEnvironmentVariable("sqldb_connection");
 
-            if (availableTime.IsRecurring == true)
+            if (availableTime.UpdateRecurring == true && availableTime.Recurring_Id != null)
             {
-                //Need to create functionality to set date to repeat every week for 26 weeks
                 using (SqlConnection conn = new SqlConnection(str))
                 {
                     conn.Open();
-                    var query = "INSERT INTO UserSchedule (User_Id, IsRecurring, Recurring_Id, StartTime, EndTime) " +
-                            "VALUES (@User_Id, @IsRecurring, @Recurring_Id, @StartTime , @EndTime);";
+                    var query = "UPDATE UserSchedule " +
+                    "SET IsRecurring = @IsRecurring, Recurring_Id = @Recurring_Id, StartTime = @StartTime, EndTime = @EndTime) " +
+                        "WHERE Recurring_Id = @Recurring_Id AND User_Id = @User_Id;";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
+                        cmd.Parameters.AddWithValue("@Timeslot_Id", availableTime.Timeslot_Id);
                         cmd.Parameters.AddWithValue("@User_Id", availableTime.User_Id);
+                        cmd.Parameters.AddWithValue("@Recurring_Id", availableTime.Recurring_Id);
                         cmd.Parameters.AddWithValue("@StartTime", availableTime.StartTime);
                         cmd.Parameters.AddWithValue("@EndTime", availableTime.EndTime);
-                        cmd.Parameters.AddWithValue("@Recurring_Id", DBNull.Value);
                         cmd.Parameters.AddWithValue("@IsRecurring", availableTime.IsRecurring);
 
                         // Execute the command and log the # rows affected.
@@ -49,20 +50,22 @@ namespace Schedule_Function_App
                     }
                 }
             }
-            else if (availableTime.IsRecurring == false)
+            else if (availableTime.UpdateRecurring == false)
             {
                 using (SqlConnection conn = new SqlConnection(str))
                 {
                     conn.Open();
-                    var query = "INSERT INTO UserSchedule (User_Id, IsRecurring, Recurring_Id, StartTime, EndTime) " +
-                            "VALUES (@User_Id, @IsRecurring, @Recurring_Id, @StartTime , @EndTime);";
+                    var query = "UPDATE UserSchedule " +
+                    "SET IsRecurring = @IsRecurring, Recurring_Id = @Recurring_Id, StartTime = @StartTime, EndTime = @EndTime) " +
+                        "WHERE Timeslot_Id = @Timeslot_Id AND User_Id = @User_Id;";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
+                        cmd.Parameters.AddWithValue("@Timeslot_Id", availableTime.Timeslot_Id);
                         cmd.Parameters.AddWithValue("@User_Id", availableTime.User_Id);
+                        cmd.Parameters.AddWithValue("@Recurring_Id", (availableTime.Recurring_Id != null) ? availableTime.Recurring_Id : DBNull.Value);
                         cmd.Parameters.AddWithValue("@StartTime", availableTime.StartTime);
                         cmd.Parameters.AddWithValue("@EndTime", availableTime.EndTime);
-                        cmd.Parameters.AddWithValue("@Recurring_Id", DBNull.Value);
                         cmd.Parameters.AddWithValue("@IsRecurring", availableTime.IsRecurring);
 
                         // Execute the command and log the # rows affected.

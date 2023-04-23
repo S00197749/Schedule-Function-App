@@ -20,10 +20,14 @@ namespace Schedule_Function_App
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
             ILogger log)
         {
-            List<GroupMember> memberList = new List<GroupMember>();
-            int group_id = int.Parse(req.Query["group_id"]);
+            var body = await new StreamReader(req.Body).ReadToEndAsync();
 
-            if (group_id != null)
+            int User_Id = JsonConvert.DeserializeObject<int>(body);
+            int Group_Id = JsonConvert.DeserializeObject<int>(body);
+
+            List<GroupMember> memberList = new List<GroupMember>();
+
+            if (await Verify.IsMember(User_Id, Group_Id))
             {
                 var str = Environment.GetEnvironmentVariable("sqldb_connection");
                 using (SqlConnection conn = new SqlConnection(str))
@@ -36,7 +40,7 @@ namespace Schedule_Function_App
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         // Add parameter.
-                        cmd.Parameters.AddWithValue("@Group_Id", group_id);
+                        cmd.Parameters.AddWithValue("@Group_Id", Group_Id);
 
                         // Execute the command and log the # rows affected.
                         var rows = await cmd.ExecuteNonQueryAsync();
@@ -61,13 +65,13 @@ namespace Schedule_Function_App
                 {
                     return new OkObjectResult(memberList);
                 }
-                return new OkObjectResult("No Groups");
+                return new NotFoundObjectResult("No Members");
             }
             else
             {
-                string responseMessage = "This HTTP triggered function executed successfully. Pass a User_Id query string or in the request body for a response.";
+                string responseMessage = "You must be a member of this group to create this request."; ;
 
-                return new OkObjectResult(responseMessage);
+                return new BadRequestObjectResult(responseMessage);
             }
         }
     }

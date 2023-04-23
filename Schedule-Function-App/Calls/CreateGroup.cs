@@ -23,7 +23,7 @@ namespace Schedule_Function_App
 
             NewGroup group = JsonConvert.DeserializeObject<NewGroup>(body);
 
-            if (group.Group_Name != null) { 
+            if (group.Group_Name != null || group.User_Id != null) { 
                 var str = Environment.GetEnvironmentVariable("sqldb_connection");
                 using (SqlConnection conn = new SqlConnection(str))
                 {

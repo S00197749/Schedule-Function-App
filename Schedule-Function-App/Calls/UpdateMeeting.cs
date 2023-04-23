@@ -9,37 +9,37 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Data.SqlClient;
 using Schedule_Function_App.Models;
-using Schedule_Function_App;
+using System.Reflection.Metadata;
 
 namespace Schedule_Function_App
 {
-    public static class CreateActivity
+    public static class UpdateMeeting
     {
-        [FunctionName("CreateActivity")]
+        [FunctionName("UpdateMeeting")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             ILogger log)
         {
             var body = await new StreamReader(req.Body).ReadToEndAsync();
 
-            NewGroupActivity activity = JsonConvert.DeserializeObject<NewGroupActivity>(body);
+            UpdatedGroupMeeting groupMeeting = JsonConvert.DeserializeObject<UpdatedGroupMeeting>(body);
 
-            if(await Verify.IsAdmin(activity.User_Id, activity.Group_Id))
+            if (await Verify.IsAdmin(groupMeeting.User_Id, groupMeeting.Group_Id))
             {
                 var str = Environment.GetEnvironmentVariable("sqldb_connection");
                 using (SqlConnection conn = new SqlConnection(str))
                 {
                     conn.Open();
-                    var query = "INSERT INTO GroupActivities (Group_Id, Activity_Name, Activity_Desc, Limit, Min_Members) " +
-                            "VALUES (@Group_Id, @Activity_Name, @Activity_Desc , @Limit , @Min_Members);";
+                    var query = "UPDATE GroupMeetings " +
+                            "SET Activity_Id = @Activity_Id, StartTime = @StartTime, EndTime = @EndTime " +
+                                "WHERE Meeting_Id = @Meeting_Id;";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        cmd.Parameters.AddWithValue("@Group_Id", activity.Group_Id);
-                        cmd.Parameters.AddWithValue("@Activity_Name", activity.Activity_Name);
-                        cmd.Parameters.AddWithValue("@Activity_Desc", activity.Activity_Description);
-                        cmd.Parameters.AddWithValue("@Limit", activity.Limit);
-                        cmd.Parameters.AddWithValue("@Min_Members", activity.Minimum_Members);
+                        cmd.Parameters.AddWithValue("@Activity_Id", groupMeeting.Activity_Id);
+                        cmd.Parameters.AddWithValue("@StartTime", groupMeeting.StartTime);
+                        cmd.Parameters.AddWithValue("@EndTime", groupMeeting.EndTime);
+                        cmd.Parameters.AddWithValue("@Meeting_Id", groupMeeting.Meeting_Id);
 
                         // Execute the command and log the # rows affected.
                         var rows = await cmd.ExecuteNonQueryAsync();

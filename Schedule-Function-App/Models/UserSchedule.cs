@@ -9,19 +9,40 @@ namespace Schedule_Function_App.Models
     public class UserSchedule
     {
         public int Timeslot_Id { get; set; }
-        public int Group_Id { get; set; }
         public int User_Id { get; set; }
+        public bool IsRecurring { get; set; }
         public int? Recurring_Id { get; set; }
-        public int? Activity_Id { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
+    }
+    public class UpdatedUserSchedule
+    {
+        public int Timeslot_Id { get; set; }
+        public int User_Id { get; set; }
+        public bool IsRecurring { get; set; }
+        public bool UpdateRecurring { get; set; }
+        public int? Recurring_Id { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
     }
     public class NewUserSchedule
     {
-        public int Group_Id { get; set; }
         public int User_Id { get; set; }
+        public bool IsRecurring { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
+    }
+    public class RemovedUserSchedule
+    {
+        public int Timeslot_Id { get; set; }
+        public int User_Id { get; set; }
+        public bool RemoveRecurring { get; set; }
         public int? Recurring_Id { get; set; }
-        public int? Activity_Id { get; set; }
+    }
+    public class LimitedUserSchedule
+    {
+        public int User_Id { get; set; }
+        public int Member_Id { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
     }
