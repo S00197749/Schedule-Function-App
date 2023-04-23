@@ -21,10 +21,8 @@ namespace Schedule_Function_App
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
             ILogger log)
         {
-            var body = await new StreamReader(req.Body).ReadToEndAsync();
-
-            int User_Id = JsonConvert.DeserializeObject<int>(body);
-            int Group_Id = JsonConvert.DeserializeObject<int>(body);
+            int User_Id = int.Parse(req.Query["u"]);
+            int Group_Id = int.Parse(req.Query["g"]);
 
             List<GroupMeeting> groupMeetings = new List<GroupMeeting>();
             List<LimitedUserSchedule> userSchedules = new List<LimitedUserSchedule>();
