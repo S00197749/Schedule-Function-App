@@ -28,7 +28,7 @@ namespace Schedule_Function_App
             using (SqlConnection conn = new SqlConnection(str))
             {
                 conn.Open();
-                var query = "Select Timeslot_Id, User_Id, IsRecurring, Recurring_Id, StartTime, EndTime " +
+                var query = "Select Timeslot_Id, IsRecurring, Recurring_Id, StartTime, EndTime " +
                                 "From UserSchedule " +
                                      $"Where User_Id = @User_Id";
 
@@ -47,11 +47,11 @@ namespace Schedule_Function_App
                         UserSchedule userSchedule = new UserSchedule()
                         {
                             Timeslot_Id = (int)reader["Timeslot_Id"],
-                            User_Id = (int)reader["User_Id"],
                             IsRecurring = (bool)reader["IsRecurring"],
                             Recurring_Id = (reader["Recurring_Id"].GetType().IsValueType) ? (int)reader["Recurring_Id"] : null,
                             StartTime = (DateTime)reader["StartTime"],
                             EndTime = (DateTime)reader["EndTime"],
+                            IsReadonly = true
                         };
                         userSchedules.Add(userSchedule);
                     }

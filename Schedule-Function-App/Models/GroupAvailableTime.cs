@@ -18,5 +18,7 @@ namespace Schedule_Function_App.Models
     {
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
+        public string EventType { get; set; }
+        public bool IsReadonly { get; set; }
     }
 }

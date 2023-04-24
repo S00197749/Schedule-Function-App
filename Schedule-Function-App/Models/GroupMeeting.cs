@@ -11,6 +11,7 @@ namespace Schedule_Function_App.Models
         public int Meeting_Id { get; set; }
         public int Group_Id { get; set; }
         public int Activity_Id { get; set; }
+        public string? Activity_Name { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
     }

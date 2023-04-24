@@ -33,30 +33,32 @@ namespace Schedule_Function_App
                 groupMeetings = await GetGroupMeetings(Group_Id, log);
                 userSchedules = await GetUserSchedules(Group_Id, log);
 
-                List<LimitedGroupAvailableTime> allNonAvailableTimes = new List<LimitedGroupAvailableTime>();
+                List<LimitedGroupAvailableTime> allAvailableTimes = new List<LimitedGroupAvailableTime>();
 
                 foreach(var groupMeeting in groupMeetings)
                 {
-                    allNonAvailableTimes.Add(new LimitedGroupAvailableTime
+                    allAvailableTimes.Add(new LimitedGroupAvailableTime
                     {
                         StartTime = groupMeeting.StartTime,
                         EndTime = groupMeeting.EndTime,
+                        EventType = groupMeeting.Activity_Name
                     });
                 }
 
                 foreach (var userSchedule in userSchedules)
                 {
-                    allNonAvailableTimes.Add(new LimitedGroupAvailableTime
+                    allAvailableTimes.Add(new LimitedGroupAvailableTime
                     {
                         StartTime = userSchedule.StartTime,
                         EndTime = userSchedule.EndTime,
+                        EventType = "Available"
                     });
                 }
 
 
-                if (allNonAvailableTimes.Count > 0)
+                if (allAvailableTimes.Count > 0)
                 {
-                    return new OkObjectResult(allNonAvailableTimes);
+                    return new OkObjectResult(allAvailableTimes);
                 }
                 return new OkObjectResult("No Schedule");
             }
@@ -76,8 +78,8 @@ namespace Schedule_Function_App
             using (SqlConnection conn = new SqlConnection(str))
             {
                 conn.Open();
-                var query = "Select GroupMeetings.Meeting_Id, GroupMeetings.Group_Id, GroupMeetings.StartTime, GroupMeetings.EndTime, GroupMeetings.Activity " +
-                                "From GroupMeetings INNER JOIN Users ON GroupMembers.User_Id = Users.User_Id " +
+                var query = "Select GroupMeetings.Meeting_Id, GroupMeetings.Group_Id, GroupMeetings.StartTime, GroupMeetings.EndTime, GroupMeetings.Activity_Id, GroupActivities.Activity_Name " +
+                                "From GroupMeetings INNER JOIN GroupActivities ON GroupMeetings.Activity_Id = GroupActivities.Activity_Id " +
                                      $"Where Group_Id = @Group_Id";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -96,6 +98,7 @@ namespace Schedule_Function_App
                         {
                             Meeting_Id = (int)reader["Meeting_Id"],
                             Activity_Id = (int)reader["Activity_Id"],
+                            Activity_Name = reader["Activity_Name"].ToString(),
                             Group_Id = (int)reader["Group_Id"],
                             StartTime = (DateTime)reader["StartTime"],
                             EndTime = (DateTime)reader["EndTime"]
