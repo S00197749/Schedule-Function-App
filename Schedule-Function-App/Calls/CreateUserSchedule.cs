@@ -50,14 +50,13 @@ namespace Schedule_Function_App
                         cmd.Parameters.AddWithValue("@DayOfWeek", dayOfWeek);
 
                         // Execute the command and log the # rows affected.
-                        var rows = await cmd.ExecuteNonQueryAsync();
-                        log.LogInformation($"{rows} rows were updated");
 
                         var reader = await cmd.ExecuteReaderAsync();
                         while (reader.Read())
                         {
                             recurring_Id = (decimal)reader["recurring_Id"];
                         }
+                        log.LogInformation($"{reader} rows were updated");
                     }
                 }
 
