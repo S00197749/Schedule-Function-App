@@ -29,7 +29,7 @@ namespace Schedule_Function_App
             if (availableTime.IsRecurring == true)
             {
                 var dayOfWeek = availableTime.StartTime.DayOfWeek;
-                var recurring_Id = 0;
+                decimal recurring_Id = 0;
 
                 //Need to create functionality to set date to repeat every week for 26 weeks
                 using (SqlConnection conn = new SqlConnection(str))
@@ -56,15 +56,18 @@ namespace Schedule_Function_App
                         var reader = await cmd.ExecuteReaderAsync();
                         while (reader.Read())
                         {
-                            recurring_Id = (int)reader["recurring_Id"];
+                            recurring_Id = (decimal)reader["recurring_Id"];
                         }
                     }
                 }
 
-                for(int i = 0; i < 26; i++)
+                var newStartTime = availableTime.StartTime;
+                var newEndTime = availableTime.EndTime;
+
+                for (int i = 0; i < 26; i++)
                 {
-                    var startTime = availableTime.StartTime.AddDays(7);
-                    var endTime = availableTime.EndTime.AddDays(7);
+                    newStartTime = newStartTime.AddDays(7);
+                    newEndTime = newEndTime.AddDays(7);
 
                     using (SqlConnection conn = new SqlConnection(str))
                     {
@@ -75,8 +78,8 @@ namespace Schedule_Function_App
                         using (SqlCommand cmd = new SqlCommand(query, conn))
                         {
                             cmd.Parameters.AddWithValue("@User_Id", availableTime.User_Id);
-                            cmd.Parameters.AddWithValue("@StartTime", startTime);
-                            cmd.Parameters.AddWithValue("@EndTime", endTime);
+                            cmd.Parameters.AddWithValue("@StartTime", newStartTime);
+                            cmd.Parameters.AddWithValue("@EndTime", newEndTime);
                             cmd.Parameters.AddWithValue("@IsRecurring", availableTime.IsRecurring);
                             cmd.Parameters.AddWithValue("@Recurring_Id", recurring_Id);
 
