@@ -28,26 +28,66 @@ namespace Schedule_Function_App
 
             if (availableTime.IsRecurring == true)
             {
+                var dayOfWeek = availableTime.StartTime.DayOfWeek;
+                var recurring_Id = 0;
+
                 //Need to create functionality to set date to repeat every week for 26 weeks
                 using (SqlConnection conn = new SqlConnection(str))
-                {
+                {                          
                     conn.Open();
-                    var query = "INSERT INTO UserSchedule (User_Id, IsRecurring, Recurring_Id, StartTime, EndTime) " +
-                            "VALUES (@User_Id, @IsRecurring, @Recurring_Id, @StartTime , @EndTime);";
+                    var query = "INSERT INTO RecurringTimes (User_Id, StartTime, EndTime, DayOfWeek) " +
+                            "VALUES (@User_Id, @StartTime, @EndTime, @DayOfWeek) " +
+                                "SELECT SCOPE_IDENTITY() as recurring_Id " +
+                                "INSERT INTO UserSchedule (User_Id, IsRecurring, Recurring_Id, StartTime, EndTime) " +
+                                    "VALUES (@User_Id, @IsRecurring, SCOPE_IDENTITY(), @StartTime , @EndTime)";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@User_Id", availableTime.User_Id);
                         cmd.Parameters.AddWithValue("@StartTime", availableTime.StartTime);
                         cmd.Parameters.AddWithValue("@EndTime", availableTime.EndTime);
-                        cmd.Parameters.AddWithValue("@Recurring_Id", DBNull.Value);
                         cmd.Parameters.AddWithValue("@IsRecurring", availableTime.IsRecurring);
+                        cmd.Parameters.AddWithValue("@DayOfWeek", dayOfWeek);
 
                         // Execute the command and log the # rows affected.
                         var rows = await cmd.ExecuteNonQueryAsync();
                         log.LogInformation($"{rows} rows were updated");
+
+                        var reader = await cmd.ExecuteReaderAsync();
+                        while (reader.Read())
+                        {
+                            recurring_Id = (int)reader["recurring_Id"];
+                        }
                     }
                 }
+
+                for(int i = 0; i < 26; i++)
+                {
+                    var startTime = availableTime.StartTime.AddDays(7);
+                    var endTime = availableTime.EndTime.AddDays(7);
+
+                    using (SqlConnection conn = new SqlConnection(str))
+                    {
+                        conn.Open();
+                        var query = "INSERT INTO UserSchedule (User_Id, IsRecurring, Recurring_Id, StartTime, EndTime) " +
+                                        "VALUES (@User_Id, @IsRecurring, @Recurring_Id, @StartTime , @EndTime)";
+
+                        using (SqlCommand cmd = new SqlCommand(query, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@User_Id", availableTime.User_Id);
+                            cmd.Parameters.AddWithValue("@StartTime", startTime);
+                            cmd.Parameters.AddWithValue("@EndTime", endTime);
+                            cmd.Parameters.AddWithValue("@IsRecurring", availableTime.IsRecurring);
+                            cmd.Parameters.AddWithValue("@Recurring_Id", recurring_Id);
+
+                            // Execute the command and log the # rows affected.
+                            var rows = await cmd.ExecuteNonQueryAsync();
+                            log.LogInformation($"{rows} rows were updated");
+
+                        }
+                    }
+                }
+                
             }
             else if (availableTime.IsRecurring == false)
             {
