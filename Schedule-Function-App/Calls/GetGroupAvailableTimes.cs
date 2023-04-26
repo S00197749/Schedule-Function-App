@@ -90,7 +90,7 @@ namespace Schedule_Function_App
                 conn.Open();
                 var query = "Select GroupMeetings.Meeting_Id, GroupMeetings.Group_Id, GroupMeetings.StartTime, GroupMeetings.EndTime, GroupMeetings.Activity_Id, GroupActivities.Activity_Name " +
                                 "From GroupMeetings INNER JOIN GroupActivities ON GroupMeetings.Activity_Id = GroupActivities.Activity_Id " +
-                                     $"Where Group_Id = @Group_Id";
+                                     $"AND GroupMeetings.Group_Id = @Group_Id";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
