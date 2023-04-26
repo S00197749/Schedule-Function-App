@@ -52,8 +52,11 @@ namespace Schedule_Function_App
                             StartTime = (DateTime)reader["StartTime"],
                             EndTime = (DateTime)reader["EndTime"],
                             IsReadonly = true,
-                            Title = "Available"
+                            Title = "Available"                           
                         };
+                        userSchedule.StartTimeString = userSchedule.StartTime.ToString("yyyy-MM-dd HH:mm");
+                        userSchedule.EndTimeString = userSchedule.EndTime.ToString("yyyy-MM-dd HH:mm");
+
                         userSchedules.Add(userSchedule);
                     }
                 }
