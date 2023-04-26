@@ -60,11 +60,7 @@ namespace Schedule_Function_App
                         }
                     }
                 }
-                if (activityList.Count > 0)
-                {
-                    return new OkObjectResult(activityList);
-                }
-                return new NotFoundObjectResult("No Activities");
+                return new OkObjectResult(activityList);
             }
             else
             {

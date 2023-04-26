@@ -61,11 +61,7 @@ namespace Schedule_Function_App
                     }
                 }
             }
-            if (userSchedules.Count > 0)
-            {
-                return new OkObjectResult(userSchedules);
-            }
-            return new NotFoundObjectResult("No Groups");
+            return new OkObjectResult(userSchedules);
         }
     }
 }

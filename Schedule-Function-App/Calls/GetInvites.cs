@@ -56,11 +56,7 @@ namespace Schedule_Function_App
                     }
                 }
             }
-            if (invites.Count > 0)
-            {
-                return new OkObjectResult(invites);
-            }
-            return new NotFoundObjectResult("No Groups");
+            return new OkObjectResult(invites);
         }
     }
 }

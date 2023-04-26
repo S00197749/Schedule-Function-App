@@ -55,11 +55,7 @@ namespace Schedule_Function_App
                     }
                 }
             }
-            if (groupList.Count > 0)
-            {
-                return new OkObjectResult(groupList);
-            }
-            return new NotFoundObjectResult("No Groups");
+            return new OkObjectResult(groupList);
         }
     }
 }

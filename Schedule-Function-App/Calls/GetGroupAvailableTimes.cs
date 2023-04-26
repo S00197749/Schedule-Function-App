@@ -66,11 +66,7 @@ namespace Schedule_Function_App
                 }
 
 
-                if (allAvailableTimes.Count > 0)
-                {
-                    return new OkObjectResult(allAvailableTimes);
-                }
-                return new OkObjectResult("No Schedule");
+                return new OkObjectResult(allAvailableTimes);
             }
             else
             {

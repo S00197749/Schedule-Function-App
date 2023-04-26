@@ -58,11 +58,7 @@ namespace Schedule_Function_App
                         }
                     }
                 }
-                if (memberList.Count > 0)
-                {
-                    return new OkObjectResult(memberList);
-                }
-                return new NotFoundObjectResult("No Members");
+                return new OkObjectResult(memberList);
             }
             else
             {
