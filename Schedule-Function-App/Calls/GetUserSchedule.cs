@@ -51,7 +51,8 @@ namespace Schedule_Function_App
                             Recurring_Id = (reader["Recurring_Id"].GetType().IsValueType) ? (int)reader["Recurring_Id"] : null,
                             StartTime = (DateTime)reader["StartTime"],
                             EndTime = (DateTime)reader["EndTime"],
-                            IsReadonly = true
+                            IsReadonly = true,
+                            Title = "Available"
                         };
                         userSchedules.Add(userSchedule);
                     }

@@ -13,6 +13,7 @@ namespace Schedule_Function_App.Models
         public bool IsRecurring { get; set; }
         public bool? IsReadonly { get; set; }
         public int? Recurring_Id { get; set; }
+        public string? Title { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
     }
