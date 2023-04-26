@@ -12,6 +12,7 @@ namespace Schedule_Function_App.Models
         public int? Group_Id { get; set;}
         public int User_Id { get; set;}
         public string Invite_Code { get; set; }
+        public string? Group_Name { get; set; }
         public bool Expired { get; set; }
     }
     public class NewGroupInvite
@@ -25,5 +26,6 @@ namespace Schedule_Function_App.Models
         public int Invite_Id { get; set; }
         public int User_Id { get; set; }
         public string Invite_Code { get; set; }
+        public bool Accepted { get; set; }
     }
 }

@@ -49,6 +49,7 @@ namespace Schedule_Function_App
                         {
                             Invite_Id = (int)reader["Invite_Id"],
                             Invite_Code = reader["Invite_Code"].ToString(),
+                            Group_Name = reader["Group_Name"].ToString(),
                             Expired = (bool)reader["Expired"]
                         };
                         invites.Add(invite);
