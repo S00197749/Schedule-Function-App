@@ -32,7 +32,7 @@ namespace Schedule_Function_App
                 {
                     conn.Open();
                     var query = "UPDATE UserSchedule " +
-                    "SET IsRecurring = @IsRecurring, Recurring_Id = @Recurring_Id, StartTime = @StartTime, EndTime = @EndTime) " +
+                    "SET StartTime = @StartTime, EndTime = @EndTime " +
                         "WHERE Recurring_Id = @Recurring_Id AND User_Id = @User_Id;";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -56,7 +56,7 @@ namespace Schedule_Function_App
                 {
                     conn.Open();
                     var query = "UPDATE UserSchedule " +
-                    "SET IsRecurring = @IsRecurring, Recurring_Id = @Recurring_Id, StartTime = @StartTime, EndTime = @EndTime) " +
+                    "SET StartTime = @StartTime, EndTime = @EndTime " +
                         "WHERE Timeslot_Id = @Timeslot_Id AND User_Id = @User_Id;";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
