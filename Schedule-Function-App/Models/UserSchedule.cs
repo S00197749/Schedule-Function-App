@@ -45,7 +45,6 @@ namespace Schedule_Function_App.Models
     }
     public class LimitedUserSchedule
     {
-        public int User_Id { get; set; }
         public int Member_Id { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }

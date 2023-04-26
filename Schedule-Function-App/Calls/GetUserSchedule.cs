@@ -54,8 +54,8 @@ namespace Schedule_Function_App
                             IsReadonly = true,
                             Title = "Available"                           
                         };
-                        userSchedule.StartTimeString = userSchedule.StartTime.ToString("yyyy-MM-dd HH:mm");
-                        userSchedule.EndTimeString = userSchedule.EndTime.ToString("yyyy-MM-dd HH:mm");
+                        userSchedule.StartTimeString = userSchedule.StartTime.ToString("dd/MM/yyyy HH:mm");
+                        userSchedule.EndTimeString = userSchedule.EndTime.ToString("HH:mm");
 
                         userSchedules.Add(userSchedule);
                     }

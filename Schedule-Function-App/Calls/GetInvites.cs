@@ -28,7 +28,7 @@ namespace Schedule_Function_App
             using (SqlConnection conn = new SqlConnection(str))
             {
                 conn.Open();
-                var query = "Select GroupInvites.Invite_Id, GroupInvites.User_Id, GroupInvites.Invite_Code, GroupInvites.Expired, Groups.Group_Name " +
+                var query = "Select GroupInvites.Invite_Id, GroupInvites.Invite_Code, GroupInvites.Expired, Groups.Group_Name " +
                                     "From GroupInvites INNER JOIN Groups ON GroupInvites.Group_Id = Groups.Group_Id " +
                                          $"And User_Id = @User_Id AND Expired = @Expired;";
 
@@ -48,7 +48,6 @@ namespace Schedule_Function_App
                         GroupInvite invite = new GroupInvite()
                         {
                             Invite_Id = (int)reader["Invite_Id"],
-                            User_Id = (int)reader["User_Id"],
                             Invite_Code = reader["Invite_Code"].ToString(),
                             Expired = (bool)reader["Expired"]
                         };

@@ -39,9 +39,16 @@ namespace Schedule_Function_App
                 {
                     allAvailableTimes.Add(new LimitedGroupAvailableTime
                     {
+                        Meeting_Id = groupMeeting.Meeting_Id,
+                        Group_Id = groupMeeting.Group_Id,
+                        Activity_Id = groupMeeting.Activity_Id,
+                        Activity_Name = groupMeeting.Activity_Name,
                         StartTime = groupMeeting.StartTime,
                         EndTime = groupMeeting.EndTime,
-                        EventType = groupMeeting.Activity_Name
+                        EventType = groupMeeting.Activity_Name,
+                        IsReadonly = true,
+                        StartTimeString = groupMeeting.StartTime.ToString("dd/MM/yyyy HH:mm"),
+                        EndTimeString = groupMeeting.EndTime.ToString("HH:mm")
                     });
                 }
 
@@ -51,7 +58,10 @@ namespace Schedule_Function_App
                     {
                         StartTime = userSchedule.StartTime,
                         EndTime = userSchedule.EndTime,
-                        EventType = "Available"
+                        EventType = "Available",
+                        IsReadonly = true,
+                        StartTimeString = userSchedule.StartTime.ToString("dd/MM/yyyy HH:mm"),
+                        EndTimeString = userSchedule.EndTime.ToString("HH:mm")
                     });
                 }
 
@@ -117,7 +127,7 @@ namespace Schedule_Function_App
             using (SqlConnection conn = new SqlConnection(str))
             {
                 conn.Open();
-                var query = "Select UserSchedule.User_Id, UserSchedule.StartTime, UserSchedule.EndTime, GroupMembers.Member_Id " +
+                var query = "Select UserSchedule.StartTime, UserSchedule.EndTime, GroupMembers.Member_Id " +
                                 "From UserSchedule INNER JOIN GroupMembers ON UserSchedule.User_Id = GroupMembers.User_Id " +
                                      $"Where UserSchedule.EndTime >= GETDATE() AND GroupMembers.Group_Id = @Group_Id";
 
@@ -135,7 +145,6 @@ namespace Schedule_Function_App
                     {
                         LimitedUserSchedule userSchedule = new LimitedUserSchedule()
                         {
-                            User_Id = (int)reader["User_Id"],
                             Member_Id = (int)reader["Member_Id"],
                             StartTime = (DateTime)reader["StartTime"],
                             EndTime = (DateTime)reader["EndTime"]
