@@ -47,10 +47,10 @@ namespace Schedule_Function_App
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         // Add parameter.
+                        cmd.Parameters.AddWithValue("@User_Id", userId);
+                        cmd.Parameters.AddWithValue("@First_Name", data.FirstName);
+                        cmd.Parameters.AddWithValue("@Last_Name", data.LastName);
                         cmd.Parameters.AddWithValue("@User_Email", data.User_Email);
-                        cmd.Parameters.AddWithValue("@User_Email", data.FirstName);
-                        cmd.Parameters.AddWithValue("@User_Email", data.LastName);
-                        cmd.Parameters.AddWithValue("@User_Email", userId);
 
                         // Execute the command and log the # rows affected.
                         var rows = await cmd.ExecuteNonQueryAsync();

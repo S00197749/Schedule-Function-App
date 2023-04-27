@@ -8,7 +8,7 @@ namespace Schedule_Function_App.Models
 {
     public class User
     {
-        public string User_Id { get; set; }
+        public string? User_Id { get; set; }
         public string? FirstName { get; set; }
         public string? User_Email { get; set; }
         public string? LastName { get; set; }
