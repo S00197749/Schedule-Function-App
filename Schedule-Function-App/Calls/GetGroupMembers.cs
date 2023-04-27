@@ -31,7 +31,7 @@ namespace Schedule_Function_App
                 using (SqlConnection conn = new SqlConnection(str))
                 {
                     conn.Open();
-                    var query = "Select GroupMembers.Member_Id, GroupMembers.Group_Id, GroupMembers.Role_Id, Users.User_Name " +
+                    var query = "Select GroupMembers.Member_Id, GroupMembers.Group_Id, GroupMembers.Role_Id, Users.First_Name, Users.Last_Name " +
                                     "From GroupMembers INNER JOIN Users ON GroupMembers.User_Id = Users.User_Id " +
                                          $"Where Group_Id = @Group_Id";
 
@@ -52,7 +52,8 @@ namespace Schedule_Function_App
                                 Member_Id = (int)reader["Member_Id"],
                                 Group_Id = (int)reader["Group_Id"],
                                 Role_Id = (int)reader["Role_Id"],
-                                User_Name = reader["User_Name"].ToString()
+                                FirstName = reader["First_Name"].ToString(),
+                                LastName = reader["Last_Name"].ToString()
                             };
                             memberList.Add(member);
                         }
