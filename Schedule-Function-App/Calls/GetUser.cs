@@ -21,7 +21,7 @@ namespace Schedule_Function_App
 
         [FunctionName("GetUser")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             ILogger log)
         {
             var body = await new StreamReader(req.Body).ReadToEndAsync();
