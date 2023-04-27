@@ -16,7 +16,7 @@ namespace Schedule_Function_App
 {
     public class Verify
     {
-        public static async Task<bool> IsAdmin(int userId, int groupId)
+        public static async Task<bool> IsAdmin(string userId, int groupId)
         {
             int Role_Id = 0;
             var str = Environment.GetEnvironmentVariable("sqldb_connection");
@@ -50,7 +50,7 @@ namespace Schedule_Function_App
                 return false;
         }
 
-        public static async Task<bool> IsMember(int userId, int groupId)
+        public static async Task<bool> IsMember(string userId, int groupId)
         {
             int Member_Id = 0;
             var str = Environment.GetEnvironmentVariable("sqldb_connection");

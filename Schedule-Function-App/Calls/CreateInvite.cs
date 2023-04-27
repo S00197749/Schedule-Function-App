@@ -30,7 +30,7 @@ namespace Schedule_Function_App
 
             if(await Verify.IsAdmin(invite.User_Id, invite.Group_Id))
             {
-                int user_Id = await FindUserIdByEmail(invite.Email, log);
+                string user_Id = await FindUserIdByEmail(invite.Email, log);
                 string inviteCode = await GetRandomString();
 
                 var str = Environment.GetEnvironmentVariable("sqldb_connection");
@@ -66,9 +66,9 @@ namespace Schedule_Function_App
 
         }
 
-        public static async Task<int> FindUserIdByEmail(string email, ILogger log)
+        public static async Task<string> FindUserIdByEmail(string email, ILogger log)
         {
-            int user_Id = 0;
+            string user_Id = string.Empty;
             var str = Environment.GetEnvironmentVariable("sqldb_connection");
             using (SqlConnection conn = new SqlConnection(str))
             {
@@ -88,7 +88,7 @@ namespace Schedule_Function_App
                     var reader = await cmd.ExecuteReaderAsync();
                     while (reader.Read())
                     {
-                        user_Id = (int)reader["User_Id"];
+                        user_Id = reader["User_Id"].ToString();
                     }
                 }
             }

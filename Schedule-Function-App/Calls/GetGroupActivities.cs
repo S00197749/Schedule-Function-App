@@ -20,7 +20,7 @@ namespace Schedule_Function_App
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
             ILogger log)
         {
-            int User_Id = int.Parse(req.Query["u"]);
+            string User_Id = req.Query["u"].ToString();
             int Group_Id = int.Parse(req.Query["g"]);
 
             List<GroupActivity> activityList = new List<GroupActivity>();

@@ -9,7 +9,7 @@ namespace Schedule_Function_App.Models
     public class UserSchedule
     {
         public int Timeslot_Id { get; set; }
-        public int? User_Id { get; set; }
+        public string? User_Id { get; set; }
         public bool IsRecurring { get; set; }
         public bool? IsReadonly { get; set; }
         public int? Recurring_Id { get; set; }
@@ -22,7 +22,7 @@ namespace Schedule_Function_App.Models
     public class UpdatedUserSchedule
     {
         public int Timeslot_Id { get; set; }
-        public int User_Id { get; set; }
+        public string User_Id { get; set; }
         public bool IsRecurring { get; set; }
         public bool UpdateRecurring { get; set; }
         public int? Recurring_Id { get; set; }
@@ -31,7 +31,7 @@ namespace Schedule_Function_App.Models
     }
     public class NewUserSchedule
     {
-        public int User_Id { get; set; }
+        public string User_Id { get; set; }
         public bool IsRecurring { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
@@ -39,7 +39,7 @@ namespace Schedule_Function_App.Models
     public class RemovedUserSchedule
     {
         public int Timeslot_Id { get; set; }
-        public int User_Id { get; set; }
+        public string User_Id { get; set; }
         public bool RemoveRecurring { get; set; }
         public int? Recurring_Id { get; set; }
     }

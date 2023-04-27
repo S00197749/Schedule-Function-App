@@ -10,13 +10,13 @@ namespace Schedule_Function_App.Models
     {
         public int Member_Id { get; set; }
         public int Group_Id { get; set; }
-        public int User_Id { get; set; }
+        public string User_Id { get; set; }
         public int Role_Id { get; set; }
         public string User_Name { get; set; }
     }
     public class RemovedMember
     {
-        public int User_Id { get; set; }
+        public string User_Id { get; set; }
         public int Member_Id { get; set; }
         public int Group_Id { get; set; }
     }
